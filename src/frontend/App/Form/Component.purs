@@ -2,7 +2,7 @@ module App.Form.Component where
 
 import Prelude
 
---import Data.Either (Either(..))
+import Data.Either (Either(..))
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Data.Symbol (SProxy(..))
@@ -14,14 +14,25 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 
+
+import Network.Ethereum.Core.HexString (HexString)
+import Data.Geohash (Geohash, geohashFromString, geohashToHex)
+import Formless.Validation (hoistFnE_)
+
+
+--------------------------------------------------------------------------------
+-- Component
+--------------------------------------------------------------------------------
+
+
+
 data Query a = Formless (F.Message' SignalForm) a
 
 type ChildQuery = F.Query' SignalForm Aff
 type ChildSlot = Unit
 
-data FormError =
+data FieldError =
     InvalidGeohash
-  | InvalidHexString
 
 component :: H.Component HH.HTML Query Unit Void Aff
 component = H.parentComponent
@@ -53,13 +64,16 @@ component = H.parentComponent
   -- in-depth usage.
   eval (Formless _ a) = pure a
 
------
+--------------------------------------------------------------------------------
 -- Formless
+--------------------------------------------------------------------------------
 
-type Signal = { geohash :: String }
+
+
+type Signal = { geohashAsHex :: HexString }
 
 newtype SignalForm r f = SignalForm (r
-  ( geohash :: f Void String String
+  ( geohashAsHex :: FieldError String HexString
   ))
 derive instance newtypeSignalForm :: Newtype (SignalForm r f) _
 
@@ -67,7 +81,11 @@ initialInputs :: SignalForm Record F.InputField
 initialInputs = F.wrapInputFields { geohash: "" }
 
 validators :: SignalForm Record (F.Validation SignalForm Aff)
-validators = SignalForm { geohash: F.hoistFn_ identity }
+validators = SignalForm { geohash: hoistFnE_ $ \gh ->
+                            case geohashFromString gh of
+                              Nothing -> Left InvalidGeohash
+                              Right gh -> Right $ geohashToHex gh
+                        }
 
 renderFormless :: F.State SignalForm Aff -> F.HTML' SignalForm Aff
 renderFormless state =
