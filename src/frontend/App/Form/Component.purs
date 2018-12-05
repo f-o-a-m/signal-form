@@ -14,17 +14,13 @@ import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
 
-
 import Network.Ethereum.Core.HexString (HexString)
-import Data.Geohash (Geohash, geohashFromString, geohashToHex)
+import Data.Geohash (geohashFromString, geohashToHex)
 import Formless.Validation (hoistFnE_)
-
 
 --------------------------------------------------------------------------------
 -- Component
 --------------------------------------------------------------------------------
-
-
 
 data Query a = Formless (F.Message' SignalForm) a
 
@@ -68,23 +64,21 @@ component = H.parentComponent
 -- Formless
 --------------------------------------------------------------------------------
 
-
-
 type Signal = { geohashAsHex :: HexString }
 
 newtype SignalForm r f = SignalForm (r
-  ( geohashAsHex :: FieldError String HexString
+  ( geohashAsHex :: f FieldError String HexString
   ))
 derive instance newtypeSignalForm :: Newtype (SignalForm r f) _
 
 initialInputs :: SignalForm Record F.InputField
-initialInputs = F.wrapInputFields { geohash: "" }
+initialInputs = F.wrapInputFields { geohashAsHex: mempty :: String }
 
 validators :: SignalForm Record (F.Validation SignalForm Aff)
-validators = SignalForm { geohash: hoistFnE_ $ \gh ->
+validators = SignalForm { geohashAsHex: hoistFnE_ $ \gh ->
                             case geohashFromString gh of
                               Nothing -> Left InvalidGeohash
-                              Right gh -> Right $ geohashToHex gh
+                              Just gh' -> Right $ geohashToHex gh'
                         }
 
 renderFormless :: F.State SignalForm Aff -> F.HTML' SignalForm Aff
@@ -99,4 +93,4 @@ renderFormless state =
      [ HH.text "Convert" ]
    ]
   where
-    _geohash = SProxy :: SProxy "geohash"
+    _geohash = SProxy :: SProxy "geohashAsHex"
