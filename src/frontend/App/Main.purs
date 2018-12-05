@@ -2,7 +2,7 @@ module App.Main where
 
 import Prelude
 
-import App.Button.Component as B
+import App.Form.Component as F
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Console as C
@@ -17,5 +17,5 @@ main = C.log "hell" *> HA.runHalogenAff do
     case mappElem of
       Nothing -> unsafeCrashWith "div#app has to be defined"
       Just appElem -> do
-        runUI B.myButton unit appElem
+        runUI F.component unit appElem
 
