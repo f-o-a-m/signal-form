@@ -18,4 +18,3 @@ main = C.log "hello" *> HA.runHalogenAff do
       Nothing -> unsafeCrashWith "div#app has to be defined"
       Just appElem -> do
         runUI F.component unit appElem
-
