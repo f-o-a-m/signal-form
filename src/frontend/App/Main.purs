@@ -12,7 +12,7 @@ import Partial.Unsafe (unsafeCrashWith)
 import Web.DOM.ParentNode (QuerySelector(..))
 
 main :: Effect Unit
-main = C.log "hell" *> HA.runHalogenAff do
+main = C.log "hello" *> HA.runHalogenAff do
     mappElem <- HA.selectElement $ QuerySelector "#app"
     case mappElem of
       Nothing -> unsafeCrashWith "div#app has to be defined"

@@ -3,20 +3,19 @@ module App.Form.Component where
 import Prelude
 
 import Data.Either (Either(..))
+import Data.Geohash (geohashFromString, geohashToHex)
 import Data.Maybe (Maybe(..))
 import Data.Newtype (class Newtype)
 import Data.Symbol (SProxy(..))
 import Effect.Aff (Aff)
 import Effect.Console (logShow)
 import Formless as F
+import Formless.Validation (hoistFnE_)
 import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-
 import Network.Ethereum.Core.HexString (HexString)
-import Data.Geohash (geohashFromString, geohashToHex)
-import Formless.Validation (hoistFnE_)
 
 --------------------------------------------------------------------------------
 -- Component
@@ -43,7 +42,7 @@ component = H.parentComponent
   render st =
     HH.section_
     [ HH.h1_ [ HH.text "Geohash Converter" ]
-    , HH.h2_ [ HH.text "Convert a base-32 geohash into a base-16 bytestring." ]
+    , HH.p_ [ HH.text "Convert a base-32 geohash into a base-16 bytestring." ]
     , HH.br_
     , HH.slot unit F.component { initialInputs, validators, render: renderFormless } (HE.input Formless)
     ]
@@ -83,14 +82,16 @@ validators = SignalForm { geohashAsHex: hoistFnE_ $ \gh ->
 
 renderFormless :: F.State SignalForm Aff -> F.HTML' SignalForm Aff
 renderFormless state =
- HH.div_
+ HH.div [HP.classes [H.ClassName "form-inline"]]
  [ HH.input
      [ HP.value $ F.getInput _geohash state.form
      , HE.onValueInput $ HE.input $ F.setValidate _geohash
      ]
-   , HH.button
-     [ HE.onClick $ HE.input_ F.submit ]
-     [ HH.text "Convert" ]
+   , HH.div [HP.classes [H.ClassName "button"]]
+     [ HH.button
+       [ HE.onClick $ HE.input_ F.submit ]
+       [ HH.text "Convert" ]
+     ]
    ]
   where
     _geohash = SProxy :: SProxy "geohashAsHex"
