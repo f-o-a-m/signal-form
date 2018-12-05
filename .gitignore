@@ -10,3 +10,4 @@
 /purescript/
 /psc-package/
 /dist/main.js*
+package-lock.json
