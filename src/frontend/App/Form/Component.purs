@@ -18,7 +18,7 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Network.Ethereum.Core.HexString (HexString)
+import Network.Ethereum.Core.HexString (HexString, padRight)
 
 --------------------------------------------------------------------------------
 -- Component
@@ -54,7 +54,12 @@ component = H.parentComponent
     , HH.p_ [ HH.text "Convert a base-32 geohash into a base-16 bytestring." ]
     , HH.br_
     , HH.slot unit F.component { initialInputs, validators, render: renderFormless } (HE.input Formless)
-    , HH.div_ [HH.text $ maybe mempty show st.geohash]
+    , HH.div [HP.classes [H.ClassName "form-inline"]]
+      [ HH.input
+        [ HP.value $ maybe mempty (show <<< padRight) st.geohash ]
+      ]
+
+    --, HH.div_ [HH.text $ maybe mempty (show <<< padRight) st.geohash]
     , HH.div_ [HH.text $ maybe mempty identity st.errorMsg]
     ]
 
