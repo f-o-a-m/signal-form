@@ -11,7 +11,6 @@ import Prelude
 
 import Data.Argonaut as A
 import Data.ByteString as BS
-import Data.Function.Uncurried (Fn2, runFn2)
 import Data.Int (hexadecimal, radix)
 import Data.Maybe (Maybe(..), fromJust)
 import Data.Newtype (class Newtype)
@@ -19,7 +18,7 @@ import Data.String.CodeUnits (fromCharArray, toCharArray)
 import Network.Ethereum.Core.BigNumber (parseBigNumber, toString)
 import Network.Ethereum.Core.HexString (HexString, mkHexString, toHexString, unHex)
 import Node.Encoding (Encoding(Hex))
-import Partial.Unsafe (unsafeCrashWith, unsafePartial)
+import Partial.Unsafe (unsafePartial)
 
 newtype Geohash = Geohash String
 

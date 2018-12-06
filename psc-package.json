@@ -8,6 +8,7 @@
     "halogen-formless",
     "prelude",
     "psci-support",
-    "eth-core"
+    "eth-core",
+    "spec"
   ]
 }

@@ -17,4 +17,4 @@ main = C.log "hello" *> HA.runHalogenAff do
     case mappElem of
       Nothing -> unsafeCrashWith "div#app has to be defined"
       Just appElem -> do
-        runUI F.component unit appElem
+        runUI F.component F.initialState appElem
